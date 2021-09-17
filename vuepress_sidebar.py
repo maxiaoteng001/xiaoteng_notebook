@@ -11,12 +11,14 @@ def get_markdown_name(file_path):
         for i in f.readlines():
             if i.startswith('#'):
                 return i.strip().replace('# ', '').capitalize()
+    print('请检查文件{}格式, 为了正确生成目录, 首行必须以#开头, markdown的标题'.format(file_path))
 
 
 def get_sidebar_item(file_dir):
     group_link = file_dir.split('docs')[-1]
     files = os.listdir(file_dir)
     children = []
+    group_text = None
     for file in files:
         if file=='.vuepress':
             pass
@@ -31,6 +33,9 @@ def get_sidebar_item(file_dir):
             # 文件夹
             new_dir = os.path.join(file_dir, file)
             children.append(get_sidebar_item(new_dir))
+    if group_text is None:
+        group_text = group_link.split('/')[-1].split('.')[0].capitalize()
+    children.sort(key=lambda k: k['text'])
     sidebar_item = {
         'text': group_text,
         'link': group_link,
@@ -43,6 +48,7 @@ def get_custom_sidebar_item(file_dir):
     group_link = file_dir.split('docs')[-1]
     files = os.listdir(file_dir)
     children = []
+    group_text = None
     for file in files:
         if file=='.vuepress':
             pass
@@ -56,6 +62,9 @@ def get_custom_sidebar_item(file_dir):
             # 文件夹, 此处延续固定目录的逻辑, 不做自适应, 这样方便返回上级
             new_dir = os.path.join(file_dir, file)
             children.append(get_sidebar_item(new_dir))
+    if group_text is None:
+        group_text = group_link.split('/')[-1].split('.')[0].capitalize()
+    children.sort(key=lambda k: k['text'])
     sidebar_item = {
         'text': group_text,
         'link': group_link,
@@ -96,6 +105,7 @@ for navbar in navbars:
     sub_dir = os.path.join(docs_dir, navbar.get('link')[1:-1])
     # 把navbar也加上, 方便返回
     custom_sidebar = [navbar]
+    print(get_custom_sidebar_item(sub_dir), sub_dir)
     custom_sidebar.extend(get_custom_sidebar_item(sub_dir).get('children'))
     custom_sidebars[navbar.get('link')] = custom_sidebar
 
