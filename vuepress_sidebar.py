@@ -48,13 +48,12 @@ def get_custom_sidebar_item(file_dir):
             pass
         elif file=='README.md':
             group_text = get_markdown_name(os.path.join(file_dir, file))
-            pass
         elif file.endswith('.md'):
             title_name = get_markdown_name(os.path.join(file_dir, file))
             child_item = {'text': title_name, 'link': os.path.join(group_link, file)}
             children.append(child_item)
         else:
-            # 文件夹
+            # 文件夹, 此处延续固定目录的逻辑, 不做自适应, 这样方便返回上级
             new_dir = os.path.join(file_dir, file)
             children.append(get_sidebar_item(new_dir))
     sidebar_item = {
@@ -95,7 +94,10 @@ navbars = get_navbar_item(docs_dir)
 custom_sidebars = {}
 for navbar in navbars:
     sub_dir = os.path.join(docs_dir, navbar.get('link')[1:-1])
-    custom_sidebars[navbar.get('link')] = get_custom_sidebar_item(sub_dir).get('children')
+    # 把navbar也加上, 方便返回
+    custom_sidebar = [navbar]
+    custom_sidebar.extend(get_custom_sidebar_item(sub_dir).get('children'))
+    custom_sidebars[navbar.get('link')] = custom_sidebar
 
 print(sidebars)
 print(custom_sidebars)
