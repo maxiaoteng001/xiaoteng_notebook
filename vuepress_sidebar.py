@@ -39,14 +39,38 @@ def get_sidebar_item(file_dir):
     return sidebar_item
 
 
+def get_custom_sidebar_item(file_dir):
+    group_link = file_dir.split('docs')[-1]
+    files = os.listdir(file_dir)
+    children = []
+    for file in files:
+        if file=='.vuepress':
+            pass
+        elif file=='README.md':
+            group_text = get_markdown_name(os.path.join(file_dir, file))
+            pass
+        elif file.endswith('.md'):
+            title_name = get_markdown_name(os.path.join(file_dir, file))
+            child_item = {'text': title_name, 'link': os.path.join(group_link, file)}
+            children.append(child_item)
+        else:
+            # 文件夹
+            new_dir = os.path.join(file_dir, file)
+            children.append(get_sidebar_item(new_dir))
+    sidebar_item = {
+        'text': group_text,
+        'link': group_link,
+        'children': children
+    }
+    return sidebar_item
+
+
 def get_navbar_item(file_dir):
     '''
     一级文件夹作为导航栏
     '''
     navbars = []
-    group_link = file_dir.split('docs')[-1]
     files = os.listdir(file_dir)
-    children = []
     for file in files:
         if file=='.vuepress':
             pass
@@ -68,10 +92,23 @@ def get_navbar_item(file_dir):
 
 sidebars = get_sidebar_item(docs_dir).get('children')
 navbars = get_navbar_item(docs_dir)
+custom_sidebars = {}
+for navbar in navbars:
+    sub_dir = os.path.join(docs_dir, navbar.get('link')[1:-1])
+    custom_sidebars[navbar.get('link')] = get_custom_sidebar_item(sub_dir).get('children')
+
 print(sidebars)
+print(custom_sidebars)
 print(navbars)
 
+'''
+sidebars 固定目录, 按文件夹展示
+custom_sidebars 根据所在目录, 实时调整目录, 配合导航栏使用(只配合导航栏, 再深层级不做调整, 为了方便返回上一级)
+NavbarConfig    右上角的导航栏
+'''
+
 with open('./docs/.vuepress/configs/sidebar.js', 'w') as f:
-    f.write('const SidebarConfig='+ str(sidebars)+ ';')
+    # f.write('const SidebarConfig='+ str(sidebars)+ ';')
+    f.write('const SidebarConfig='+ str(custom_sidebars)+ ';')
     f.write('const NavbarConfig='+ str(navbars)+ ';')
     f.write('module.exports = {SidebarConfig, NavbarConfig};')
