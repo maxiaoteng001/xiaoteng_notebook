@@ -3,6 +3,9 @@
 # abort on errors
 set -e
 
+# 刷新目录
+python3 vuepress_sidebar.py
+
 # build
 npm run docs:build
 

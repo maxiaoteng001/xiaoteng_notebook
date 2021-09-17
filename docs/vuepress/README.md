@@ -24,3 +24,4 @@
     ```
 
 4. 静态文件默认位于`.vuepress/public`, 引用`/`
+5. 开发测试`yarn docs:dev`
