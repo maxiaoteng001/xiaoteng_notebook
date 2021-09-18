@@ -6,11 +6,14 @@ Distributed Task Queue
     1. Redis
     2. Rebbit MQ
 2. Installing Celery
-    ```
+
+    ```shell
     pip install celery
     ```
+
 3. Application
     1. app线程安全
+
         ```python
         from celery import Celery
         app = Celery('tasks', broker='pyamqp://guest@localhost//')
@@ -20,8 +23,10 @@ Distributed Task Queue
         def add(x, y):
             return x + y
         ```
+
 4. Keeping Results
-    1. 为了追踪任务状态, celery需要存储和发送任务状态, backend可选( SQLAlchemy/Django ORM, MongoDB, Memcached, Redis, RPC (RabbitMQ/AMQP))
+    为了追踪任务状态, celery需要存储和发送任务状态, backend可选( SQLAlchemy/Django ORM, MongoDB, Memcached, Redis, RPC (RabbitMQ/AMQP))
+
     ```python
     from celery import Celery
     app = Celery('tasks', backend='redis://localhost', broker='pyamqp://guest@localhost//')
@@ -41,8 +46,10 @@ Distributed Task Queue
     result.get(propagate=False) # 只返回异常名, 不返回完整的调用栈
     result.traceback    # 查看完整的调用栈
     ```
+
 5. Configuration
     1. 硬编码配置
+
         ```python
         app.conf.task_serializer = 'json'
         app.conf.update(
@@ -53,8 +60,10 @@ Distributed Task Queue
             enable_utc=True,
         )
         ```
+
     2. 配置文件
-        ```
+
+        ```python
         app.config_from_object('celeryconfig')
         # celeryconfig.py
         broker_url = 'pyamqp://'
@@ -71,8 +80,11 @@ Distributed Task Queue
             'tasks.add': {'rate_limit': '10/m'} # 每分钟处理10个任务
         }
         ```
+
 6. 启动worker
+
     ```Shell
     celery -A tasks worker --loglevel=INFO
     ```
+
 7. other

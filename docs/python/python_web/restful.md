@@ -7,13 +7,15 @@
 资源: 歌曲,文章,文本,视频
 
 ## 1. SOAP 和 RESTful架构
+
 1. 效率和易用性, soap易用性差
 2. 安全性方面: RESTful使用安全要求不高的资源型服务接口.
 
 ## 2. 如何设计RESTful API
+
 1. 资源路径
     1. 资源常用复数
-        - https://api.example.com/v1/posts  // 博客资源
+        - <https://api.example.com/v1/posts>  // 博客资源
 2. HTTP动词
     1. GET
         - /posts/ID
@@ -48,11 +50,13 @@
 
 5. 错误处理
     1. 响应提示
-        - ```
-            {
-                "error": "参数错误"
-            }
-        ```
+
+    ```json
+        {
+            "error": "参数错误"
+        }
+    ```
+
 6. 返回结构
     1. GET  /collections    返回资源对象的列表
     2. GET  /collections/identity   返回单个资源对象
